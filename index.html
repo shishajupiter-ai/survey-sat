@@ -770,6 +770,7 @@
 // ─── ADMIN PASSWORD ───────────────────────────────────────
 const ADMIN_PASS = 'sat2569';   // ← เปลี่ยนรหัสผ่านได้ที่นี่
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzQ-_kBlhLQywR816wgrbN2Jxm2LnmdjG3VGlNtmypRu4QN1jm3zFq02tfXZXk5m-IL/exec';
+const SHEET_GET_URL = 'https://script.google.com/macros/s/AKfycbwUhGsMXmu6f3_kxIu0LGMpODtUuqAaaHhhDlbpHUdJAodW8bY_FJDwkP1ppjADTllp/exec';
 let adminUnlocked = false;
 
 function requestDashboard() {
@@ -961,6 +962,43 @@ function resetForm() {
 
 // ─── DASHBOARD ────────────────────────────────────────────
 function renderDashboard() {
+  document.getElementById('dash-empty').style.display = 'none';
+  document.getElementById('dash-content').style.display = 'none';
+  document.getElementById('dash-count').textContent = 'กำลังโหลด...';
+
+  fetch(SHEET_GET_URL)
+    .then(r => r.json())
+    .then(data => {
+      // แปลง header ของ Sheet ให้เป็น key q1-q11
+      const keyMap = {
+        'Q1_เวรเช้า': 'q1', 'Q2_เหตุผล': 'q2',
+        'Q3_เวรบ่าย-หยุด': 'q3', 'Q4_เหตุผล': 'q4',
+        'Q5_คละนักวิชาการ': 'q5', 'Q6_เหตุผล': 'q6',
+        'Q7_รูปแบบเวรบ่าย': 'q7', 'Q8_เหตุผล': 'q8',
+        'Q9_รูปแบบเวรหยุด': 'q9', 'Q10_เหตุผล': 'q10',
+        'Q11_การจัดเวร': 'q11', 'เวลา': 'ts'
+      };
+      responses = data.map(row => {
+        const r = {};
+        Object.entries(row).forEach(([k, v]) => {
+          const mapped = keyMap[k];
+          if (mapped) r[mapped] = v;
+        });
+        return r;
+      });
+      drawDashboard();
+    })
+    .catch(err => {
+      document.getElementById('dash-count').textContent = 'โหลดไม่ได้ค่ะ';
+      document.getElementById('dash-empty').style.display = 'block';
+      document.getElementById('dash-empty').innerHTML = `
+        <div class="empty-icon">⚠️</div>
+        <div style="font-size:16px;font-weight:600;margin-bottom:8px">ไม่สามารถโหลดข้อมูลได้</div>
+        <div style="font-size:13px">กรุณาตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</div>`;
+    });
+}
+
+function drawDashboard() {
   const n = responses.length;
   document.getElementById('dash-count').textContent = n + ' การตอบกลับ';
   document.getElementById('dash-empty').style.display = n === 0 ? 'block' : 'none';
@@ -1035,7 +1073,7 @@ function renderTextResponses(containerId, key, label) {
 // ─── EXPORT CSV ───────────────────────────────────────────
 function exportCSV() {
   if (responses.length === 0) { alert('ยังไม่มีข้อมูลค่ะ'); return; }
-  const headers = ['เวลา','Q1','Q2_เหตุผล','Q3','Q4_เหตุผล','Q5','Q6_เหตุผล','Q7_เวรบ่าย','Q8_เหตุผล','Q9_เวรหยุด','Q10_เหตุผล','Q11_การจัดเวร'];
+  const headers = ['เวลา','Q1_เวรเช้า','Q2_เหตุผล','Q3_เวรบ่าย-หยุด','Q4_เหตุผล','Q5_คละนักวิชาการ','Q6_เหตุผล','Q7_รูปแบบเวรบ่าย','Q8_เหตุผล','Q9_รูปแบบเวรหยุด','Q10_เหตุผล','Q11_การจัดเวร'];
   const rows = responses.map(r => [
     r.ts, r.q1, r.q2, r.q3, r.q4, r.q5, r.q6, r.q7, r.q8, r.q9, r.q10, r.q11
   ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
@@ -1049,7 +1087,7 @@ function exportCSV() {
 function printDash() { window.print(); }
 
 function clearData() {
-  if (!confirm('ต้องการลบข้อมูลทั้งหมดใช่ไหมคะ?')) return;
+  if (!confirm('ต้องการล้างข้อมูลในหน้านี้และโหลดใหม่จาก Google Sheets ใช่ไหมคะ?\n(ข้อมูลใน Google Sheets ยังอยู่ครบนะคะ)')) return;
   responses = [];
   localStorage.removeItem('survey_responses');
   renderDashboard();
