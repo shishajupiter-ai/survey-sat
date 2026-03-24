@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>แบบสอบถามความคิดเห็น – กองสาธารณสุขฉุกเฉิน</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Noto+Serif+Thai:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #003087;
+    --primary-light: #0055cc;
+    --accent: #c8102e;
+    --accent-light: #ff3355;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --text: #1a1f36;
+    --text-soft: #5a6282;
+    --border: #dde3f0;
+    --success: #00875a;
+    --radius: 12px;
+    --shadow: 0 2px 16px rgba(0,48,135,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ─── HEADER ─── */
+  .site-header {
+    background: linear-gradient(135deg, #003087 0%, #0055cc 60%, #0077ff 100%);
+    color: white;
+    padding: 32px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .site-header .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 20px;
+    padding: 4px 16px;
+    font-size: 13px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+  .site-header h1 {
+    font-family: 'Noto Serif Thai', serif;
+    font-size: clamp(20px, 4vw, 28px);
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .site-header p {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  /* ─── TABS ─── */
+  .tabs {
+    display: flex;
+    background: white;
+    border-bottom: 2px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 14px 8px;
+    border: none;
+    background: none;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-soft);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .tab-btn:hover { color: var(--primary); background: #f0f4ff; }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  /* ─── PANELS ─── */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ─── FORM ─── */
+  .form-container {
+    max-width: 760px;
+    margin: 32px auto;
+    padding: 0 16px 60px;
+  }
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 8px;
+    height: 6px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--primary-light));
+    border-radius: 8px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+  .progress-text {
+    font-size: 12px;
+    color: var(--text-soft);
+    text-align: right;
+    margin-bottom: 6px;
+  }
+
+  .question-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    border-left: 4px solid var(--border);
+    transition: border-color 0.2s;
+    position: relative;
+  }
+  .question-card.answered { border-left-color: var(--primary); }
+  .question-card.required-error { border-left-color: var(--accent); }
+
+  .q-number {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 6px;
+  }
+  .q-text {
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+    color: var(--text);
+    margin-bottom: 18px;
+  }
+  .q-text .required-star {
+    color: var(--accent);
+    margin-left: 4px;
+  }
+
+  /* Radio options */
+  .options-list { display: flex; flex-direction: column; gap: 10px; }
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-size: 15px;
+  }
+  .option-label:hover { border-color: var(--primary-light); background: #f0f5ff; }
+  .option-label input[type="radio"] { display: none; }
+  .radio-circle {
+    width: 20px; height: 20px;
+    border: 2px solid #b0b8d0;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s;
+  }
+  .radio-circle::after {
+    content: '';
+    width: 10px; height: 10px;
+    background: var(--primary);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.18s;
+  }
+  .option-label input[type="radio"]:checked ~ .radio-circle { border-color: var(--primary); }
+  .option-label input[type="radio"]:checked ~ .radio-circle::after { transform: scale(1); }
+  .option-label:has(input:checked) { border-color: var(--primary); background: #eef3ff; }
+
+  /* Textarea */
+  .form-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    resize: vertical;
+    min-height: 100px;
+    transition: border-color 0.2s;
+    background: #fafbff;
+  }
+  .form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    background: white;
+  }
+  .form-textarea::placeholder { color: #a0a8c0; }
+
+  /* Error */
+  .error-msg {
+    font-size: 13px;
+    color: var(--accent);
+    margin-top: 8px;
+    display: none;
+    align-items: center;
+    gap: 4px;
+  }
+  .error-msg.show { display: flex; }
+
+  /* ─── CONDITIONAL CARD ─── */
+  .question-card.conditional {
+    overflow: hidden;
+    max-height: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+    transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease, margin 0.3s ease;
+    border-left-color: #f59e0b;
+  }
+  .question-card.conditional.visible {
+    max-height: 400px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    margin-bottom: 20px;
+    opacity: 1;
+    pointer-events: all;
+  }
+  .conditional-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    color: #c2410c;
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* Submit button */
+  .submit-wrap { text-align: center; margin-top: 32px; }
+  .btn-submit {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 14px 48px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,48,135,0.3);
+    transition: all 0.2s;
+  }
+  .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,48,135,0.4); }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* ─── SUCCESS ─── */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 60px 24px;
+  }
+  .success-screen.show { display: block; }
+  .success-icon {
+    width: 80px; height: 80px;
+    background: linear-gradient(135deg, var(--success), #00a86b);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 36px;
+  }
+  .success-screen h2 { font-size: 24px; font-weight: 700; margin-bottom: 8px; color: var(--success); }
+  .success-screen p { color: var(--text-soft); font-size: 15px; }
+
+  /* ─── DASHBOARD ─── */
+  .dash-container {
+    max-width: 900px;
+    margin: 32px auto;
+    padding: 0 16px 60px;
+  }
+  .dash-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .dash-title { font-size: 20px; font-weight: 700; color: var(--primary); }
+  .dash-count {
+    background: var(--primary);
+    color: white;
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    text-align: center;
+  }
+  .stat-card .stat-num { font-size: 36px; font-weight: 700; color: var(--primary); }
+  .stat-card .stat-label { font-size: 13px; color: var(--text-soft); margin-top: 4px; }
+
+  .chart-section {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .chart-section h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .bar-group { margin-bottom: 12px; }
+  .bar-label { font-size: 14px; margin-bottom: 4px; display: flex; justify-content: space-between; }
+  .bar-track { background: #eef1f8; border-radius: 6px; height: 28px; overflow: hidden; }
+  .bar-fill {
+    height: 100%;
+    display: flex; align-items: center; padding-left: 10px;
+    font-size: 13px; font-weight: 700; color: white;
+    border-radius: 6px;
+    transition: width 0.6s ease;
+  }
+  .bar-agree { background: linear-gradient(90deg, #003087, #0055cc); }
+  .bar-disagree { background: linear-gradient(90deg, #c8102e, #ff3355); }
+  .bar-online { background: linear-gradient(90deg, #007bff, #00c6ff); }
+  .bar-onsite { background: linear-gradient(90deg, #6f42c1, #a855f7); }
+  .bar-wheel { background: linear-gradient(90deg, #fd7e14, #ffc107); }
+  .bar-ai { background: linear-gradient(90deg, #20c997, #00d2a8); }
+
+  .responses-section {
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .responses-section h3 {
+    font-size: 15px; font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .response-item {
+    padding: 12px 16px;
+    background: #f8f9fd;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: var(--text);
+    border-left: 3px solid var(--primary-light);
+  }
+  .response-meta { font-size: 11px; color: var(--text-soft); margin-bottom: 4px; }
+
+  .dash-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+  .btn-action {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 20px;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    background: white;
+    color: var(--primary);
+    font-family: 'Sarabun', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+  .btn-action:hover { background: var(--primary); color: white; }
+  .btn-action.danger { border-color: var(--accent); color: var(--accent); }
+  .btn-action.danger:hover { background: var(--accent); color: white; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-soft);
+  }
+  .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
+
+  /* ─── PRINT ─── */
+  @media print {
+    .tabs, .site-header, .dash-actions, .btn-submit, .tab-btn { display: none !important; }
+    body { background: white; }
+    .panel { display: block !important; }
+    #panel-form { display: none !important; }
+    .dash-container { max-width: 100%; margin: 0; padding: 0; }
+    .chart-section, .stat-card, .responses-section { box-shadow: none; border: 1px solid #ddd; }
+    .bar-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  /* ─── LOGIN OVERLAY ─── */
+  #login-overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 9999;
+    background: rgba(0,20,60,0.7);
+    backdrop-filter: blur(4px);
+    align-items: center; justify-content: center;
+  }
+  #login-overlay.show { display: flex; }
+  .login-box {
+    background: white;
+    border-radius: 16px;
+    padding: 36px 32px 28px;
+    width: 100%; max-width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+  .login-icon {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 16px;
+    font-size: 26px;
+  }
+  .login-box h2 { font-size: 20px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+  .login-box p { font-size: 13px; color: var(--text-soft); margin-bottom: 20px; }
+  .login-input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+    text-align: center;
+    letter-spacing: 4px;
+  }
+  .login-input:focus { outline: none; border-color: var(--primary-light); }
+  .login-input.error { border-color: var(--accent); animation: shake 0.3s; }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  .login-err { font-size: 13px; color: var(--accent); margin-bottom: 10px; min-height: 18px; }
+  .btn-login {
+    width: 100%;
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white; border: none; border-radius: 8px;
+    padding: 12px; font-family: 'Sarabun', sans-serif;
+    font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .btn-login:hover { opacity: 0.9; }
+  .login-hint { font-size: 11px; color: var(--text-soft); margin-top: 14px; }
+
+</style>
+</head>
+<body>
+
+<div class="site-header">
+  <div class="badge">กองสาธารณสุขฉุกเฉิน • สำนักงานปลัดกระทรวงสาธารณสุข</div>
+  <h1>แบบสอบถามความคิดเห็น<br>เกี่ยวกับการจัดเวรของกอง</h1>
+  <p>โปรดตอบแบบสอบถามให้ครบทุกข้อ ข้อมูลจะถูกเก็บเป็นความลับ</p>
+</div>
+
+<!-- ═══════════ LOGIN OVERLAY ═══════════ -->
+<div id="login-overlay">
+  <div class="login-box">
+    <div class="login-icon">🔒</div>
+    <h2>สรุปผล Dashboard</h2>
+    <p>สำหรับแอดมินเท่านั้น<br>กรุณาใส่รหัสผ่านเพื่อเข้าดูผลสรุป</p>
+    <input class="login-input" type="password" id="admin-pass" placeholder="รหัสผ่าน"
+      onkeydown="if(event.key==='Enter') checkPass()">
+    <div class="login-err" id="login-err"></div>
+    <button class="btn-login" onclick="checkPass()">เข้าสู่ระบบ</button>
+    <div class="login-hint">💡 ติดต่อแอดมินเพื่อขอรหัสผ่าน</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('form')" id="tab-form">
+    📋 กรอกแบบสอบถาม
+  </button>
+  <button class="tab-btn" onclick="requestDashboard()" id="tab-dashboard">
+    🔐 สรุปผล Dashboard
+  </button>
+</div>
+
+<!-- ═══════════ PANEL: FORM ═══════════ -->
+<div id="panel-form" class="panel active">
+  <div class="form-container">
+
+    <div id="form-main">
+      <div class="progress-text" id="progress-text">ตอบแล้ว 0 จาก 8 ข้อบังคับ</div>
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="progress-bar"></div>
+      </div>
+
+      <!-- Q1 -->
+      <div class="question-card" id="card-q1">
+        <div class="q-text">เวรเช้า วันธรรมดา บริหารจัดการ 1 คน โดยงาน SAT <span class="required-star">*</span></div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q1" value="เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> เห็นด้วย
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q1" value="ไม่เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> ไม่เห็นด้วย
+          </label>
+        </div>
+        <div class="error-msg" id="err-q1">⚠ กรุณาเลือกคำตอบ</div>
+      </div>
+
+      <!-- Q2 (conditional: shows only if Q1 = ไม่เห็นด้วย) -->
+      <div class="question-card conditional" id="card-q2">
+        <div class="conditional-badge">↳ แสดงเมื่อตอบว่า "ไม่เห็นด้วย"</div>
+        <div class="q-text">กรณีที่ไม่เห็นด้วย โปรดให้เหตุผลหรือข้อเสนอแนะ <span class="required-star">*</span></div>
+        <textarea class="form-textarea" id="q2" placeholder="ใส่คำตอบ" onkeyup="handleChange()"></textarea>
+        <div class="error-msg" id="err-q2">⚠ กรุณากรอกข้อมูล</div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-card" id="card-q3">
+        <div class="q-text">เวรบ่ายและเวรวันหยุด อยู่เวร 2 คน โดยทุกคนในกอง ยกเว้นลูกจ้างเหมา <span class="required-star">*</span></div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q3" value="เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> เห็นด้วย
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q3" value="ไม่เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> ไม่เห็นด้วย
+          </label>
+        </div>
+        <div class="error-msg" id="err-q3">⚠ กรุณาเลือกคำตอบ</div>
+      </div>
+
+      <!-- Q4 (conditional: shows only if Q3 = ไม่เห็นด้วย) -->
+      <div class="question-card conditional" id="card-q4">
+        <div class="conditional-badge">↳ แสดงเมื่อตอบว่า "ไม่เห็นด้วย"</div>
+        <div class="q-text">กรณีที่ไม่เห็นด้วย โปรดให้เหตุผลหรือข้อเสนอแนะ <span class="required-star">*</span></div>
+        <textarea class="form-textarea" id="q4" placeholder="ใส่คำตอบ" onkeyup="handleChange()"></textarea>
+        <div class="error-msg" id="err-q4">⚠ กรุณากรอกข้อมูล</div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-card" id="card-q5">
+        <div class="q-text">หากเวรบ่ายและเวรวันหยุด ต้องอยู่เวร 2 คน จะมีการคละนักวิชาการสาธารณสุข 1 คน และที่ไม่ใช่นักวิชาการสาธารณสุข 1 คน แต่หากต้องอยู่มากกว่า 2 คน ก็จะยึดให้ทุกวันต้องมีนักวิชาการสาธารณสุข อย่างน้อย 1 คนเสมอ ท่านเห็นด้วยหรือไม่? <span class="required-star">*</span></div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q5" value="เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> เห็นด้วย
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q5" value="ไม่เห็นด้วย" onchange="handleChange()">
+            <span class="radio-circle"></span> ไม่เห็นด้วย
+          </label>
+        </div>
+        <div class="error-msg" id="err-q5">⚠ กรุณาเลือกคำตอบ</div>
+      </div>
+
+      <!-- Q6 (conditional: shows only if Q5 = ไม่เห็นด้วย) -->
+      <div class="question-card conditional" id="card-q6">
+        <div class="conditional-badge">↳ แสดงเมื่อตอบว่า "ไม่เห็นด้วย"</div>
+        <div class="q-text">กรณีที่ไม่เห็นด้วย โปรดให้เหตุผลหรือข้อเสนอแนะ <span class="required-star">*</span></div>
+        <textarea class="form-textarea" id="q6" placeholder="ใส่คำตอบ" onkeyup="handleChange()"></textarea>
+        <div class="error-msg" id="err-q6">⚠ กรุณากรอกข้อมูล</div>
+      </div>
+
+      <!-- Q7 + Q8 รวมกัน: เวรบ่าย -->
+      <div class="question-card" id="card-q7">
+        <div class="q-text">ท่านคิดว่าเวรบ่าย ควรอยู่ในรูปแบบใด? <span class="required-star">*</span></div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q7" value="ออนไลน์ (Online)" onchange="handleChange()">
+            <span class="radio-circle"></span> ออนไลน์ (Online)
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q7" value="ออนไซต์ (Onsite)" onchange="handleChange()">
+            <span class="radio-circle"></span> ออนไซต์ (Onsite)
+          </label>
+        </div>
+        <div class="error-msg" id="err-q7">⚠ กรุณาเลือกคำตอบ</div>
+        <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--border)">
+          <div class="q-text" style="font-size:15px;margin-bottom:10px">โปรดให้เหตุผลประกอบ <span class="required-star">*</span></div>
+          <textarea class="form-textarea" id="q8" placeholder="ใส่คำตอบ" onkeyup="handleChange()"></textarea>
+          <div class="error-msg" id="err-q8">⚠ กรุณากรอกข้อมูล</div>
+        </div>
+      </div>
+
+      <!-- Q9 + Q10 รวมกัน: เวรวันหยุด -->
+      <div class="question-card" id="card-q9">
+        <div class="q-text">ท่านคิดว่าเวรวันหยุด ควรอยู่ในรูปแบบใด?</div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q9" value="ออนไลน์ (Online)" onchange="handleChange()">
+            <span class="radio-circle"></span> ออนไลน์ (Online)
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q9" value="ออนไซต์ (Onsite)" onchange="handleChange()">
+            <span class="radio-circle"></span> ออนไซต์ (Onsite)
+          </label>
+        </div>
+        <div style="margin-top:18px;padding-top:16px;border-top:1px dashed var(--border)">
+          <div class="q-text" style="font-size:15px;margin-bottom:10px">โปรดให้เหตุผลประกอบ <span class="required-star">*</span></div>
+          <textarea class="form-textarea" id="q10" placeholder="ใส่คำตอบ" onkeyup="handleChange()"></textarea>
+          <div class="error-msg" id="err-q10">⚠ กรุณากรอกข้อมูล</div>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="question-card" id="card-q11">
+        <div class="q-text">ท่านอยากให้การจัดเวร เป็นรูปแบบใด <span class="required-star">*</span></div>
+        <div class="options-list">
+          <label class="option-label">
+            <input type="radio" name="q11" value="หมุนวงล้อ Wheel of Names เช่นเดิม" onchange="handleChange()">
+            <span class="radio-circle"></span> หมุนวงล้อ Wheel of Names เช่นเดิม (อยากลุ้น และใช้ดวงตัวเอง)
+          </label>
+          <label class="option-label">
+            <input type="radio" name="q11" value="ให้ SAT ใช้ AI จัดให้" onchange="handleChange()">
+            <span class="radio-circle"></span> ให้ SAT ใช้ AI จัดให้ (ตามหลักเทคโนโลยี และไม่มี Bias)
+          </label>
+        </div>
+        <div class="error-msg" id="err-q11">⚠ กรุณาเลือกคำตอบ</div>
+      </div>
+
+      <div class="submit-wrap">
+        <button class="btn-submit" onclick="submitForm()">ส่งแบบสอบถาม →</button>
+      </div>
+    </div>
+
+    <!-- Success -->
+    <div class="success-screen" id="success-screen">
+      <div class="success-icon">✓</div>
+      <h2>ขอบคุณสำหรับการตอบแบบสอบถาม!</h2>
+      <p style="margin-bottom:24px">ข้อมูลของท่านถูกบันทึกเรียบร้อยแล้ว</p>
+      <button class="btn-submit" onclick="resetForm()" style="background: linear-gradient(135deg,#00875a,#00a86b)">
+        ตอบแบบสอบถามอีกครั้ง
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ PANEL: DASHBOARD ═══════════ -->
+<div id="panel-dashboard" class="panel">
+  <div class="dash-container">
+    <div class="dash-header">
+      <div>
+        <div class="dash-title">📊 สรุปผลแบบสอบถาม</div>
+        <div style="font-size:13px;color:var(--text-soft);margin-top:2px">การจัดเวรของกองสาธารณสุขฉุกเฉิน</div>
+      </div>
+      <span class="dash-count" id="dash-count">0 การตอบกลับ</span>
+    </div>
+
+    <div class="dash-actions">
+      <button class="btn-action" onclick="exportCSV()">⬇ Export CSV</button>
+      <button class="btn-action" onclick="printDash()">🖨 พิมพ์รายงาน</button>
+      <button class="btn-action danger" onclick="clearData()">🗑 ล้างข้อมูล</button>
+    </div>
+
+    <div id="dash-empty" class="empty-state">
+      <div class="empty-icon">📋</div>
+      <div style="font-size:18px;font-weight:600;margin-bottom:8px">ยังไม่มีข้อมูล</div>
+      <div>กรุณากรอกแบบสอบถามก่อนค่ะ</div>
+    </div>
+
+    <div id="dash-content" style="display:none">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num" id="st-total">0</div>
+          <div class="stat-label">ผู้ตอบทั้งหมด</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#00875a" id="st-q1-agree">0%</div>
+          <div class="stat-label">เห็นด้วย Q1 (เวรเช้า SAT)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#00875a" id="st-q3-agree">0%</div>
+          <div class="stat-label">เห็นด้วย Q3 (เวรบ่าย-หยุด)</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num" style="color:#00875a" id="st-q5-agree">0%</div>
+          <div class="stat-label">เห็นด้วย Q5 (คละนักวิชาการ)</div>
+        </div>
+      </div>
+
+      <!-- Q1 chart -->
+      <div class="chart-section">
+        <h3>เวรเช้า วันธรรมดา บริหารจัดการ 1 คน โดยงาน SAT</h3>
+        <div id="chart-q1"></div>
+        <div id="text-q2"></div>
+      </div>
+
+      <!-- Q3 chart -->
+      <div class="chart-section">
+        <h3>เวรบ่ายและเวรวันหยุด อยู่เวร 2 คน (ยกเว้นลูกจ้างเหมา)</h3>
+        <div id="chart-q3"></div>
+        <div id="text-q4"></div>
+      </div>
+
+      <!-- Q5 chart -->
+      <div class="chart-section">
+        <h3>ข้อ 5 · การคละนักวิชาการสาธารณสุขในเวรบ่าย/วันหยุด</h3>
+        <div id="chart-q5"></div>
+        <div id="text-q6"></div>
+      </div>
+
+      <!-- Q7 chart -->
+      <div class="chart-section">
+        <h3>รูปแบบเวรบ่าย</h3>
+        <div id="chart-q7"></div>
+        <div id="text-q8"></div>
+      </div>
+
+      <!-- Q9 chart -->
+      <div class="chart-section">
+        <h3>รูปแบบเวรวันหยุด</h3>
+        <div id="chart-q9"></div>
+        <div id="text-q10"></div>
+      </div>
+
+      <!-- Q11 chart -->
+      <div class="chart-section">
+        <h3>รูปแบบการจัดเวรที่ต้องการ</h3>
+        <div id="chart-q11"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── ADMIN PASSWORD ───────────────────────────────────────
+const ADMIN_PASS = 'sat2569';   // ← เปลี่ยนรหัสผ่านได้ที่นี่
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbzQ-_kBlhLQywR816wgrbN2Jxm2LnmdjG3VGlNtmypRu4QN1jm3zFq02tfXZXk5m-IL/exec';
+let adminUnlocked = false;
+
+function requestDashboard() {
+  if (adminUnlocked) {
+    switchTab('dashboard');
+  } else {
+    document.getElementById('login-overlay').classList.add('show');
+    document.getElementById('admin-pass').value = '';
+    document.getElementById('login-err').textContent = '';
+    setTimeout(() => document.getElementById('admin-pass').focus(), 100);
+  }
+}
+
+function checkPass() {
+  const val = document.getElementById('admin-pass').value;
+  const input = document.getElementById('admin-pass');
+  if (val === ADMIN_PASS) {
+    adminUnlocked = true;
+    document.getElementById('login-overlay').classList.remove('show');
+    document.getElementById('tab-dashboard').textContent = '📊 สรุปผล Dashboard';
+    switchTab('dashboard');
+  } else {
+    document.getElementById('login-err').textContent = 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่';
+    input.classList.add('error');
+    input.value = '';
+    setTimeout(() => { input.classList.remove('error'); input.focus(); }, 400);
+  }
+}
+
+// ─── DATA STORE ───────────────────────────────────────────
+let responses = JSON.parse(localStorage.getItem('survey_responses') || '[]');
+// Required fields that are always required
+const ALWAYS_REQUIRED = ['q1','q3','q5','q7','q8','q10','q11'];
+// card-q8 is inside card-q7; card-q10 is inside card-q9 (no separate card needed)
+const CARD_MAP = { q8: 'q7', q10: 'q9' }; // map field → parent card id
+// Conditionally required fields
+const CONDITIONAL = {
+  q2: { trigger: 'q1', value: 'ไม่เห็นด้วย' },
+  q4: { trigger: 'q3', value: 'ไม่เห็นด้วย' },
+  q6: { trigger: 'q5', value: 'ไม่เห็นด้วย' },
+};
+
+function getActiveRequired() {
+  const active = [...ALWAYS_REQUIRED];
+  Object.entries(CONDITIONAL).forEach(([field, rule]) => {
+    const sel = document.querySelector(`[name="${rule.trigger}"]:checked`);
+    if (sel && sel.value === rule.value) active.push(field);
+  });
+  return active;
+}
+
+// ─── CONDITIONAL VISIBILITY ───────────────────────────────
+function updateConditionals() {
+  Object.entries(CONDITIONAL).forEach(([field, rule]) => {
+    const card = document.getElementById('card-' + field);
+    const sel = document.querySelector(`[name="${rule.trigger}"]:checked`);
+    const show = sel && sel.value === rule.value;
+    card.classList.toggle('visible', show);
+    if (!show) {
+      const ta = document.getElementById(field);
+      if (ta) ta.value = '';
+      const err = document.getElementById('err-' + field);
+      if (err) err.classList.remove('show');
+      card.classList.remove('answered', 'required-error');
+    }
+  });
+}
+
+// ─── TAB SWITCH ───────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + tab).classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'dashboard') renderDashboard();
+}
+
+// ─── PROGRESS ─────────────────────────────────────────────
+function handleChange() {
+  updateConditionals();
+  const required = getActiveRequired();
+  let answered = 0;
+  required.forEach(f => {
+    const isRadio = document.querySelector(`[name="${f}"]`);
+    const filled = isRadio
+      ? !!document.querySelector(`[name="${f}"]:checked`)
+      : (document.getElementById(f) && document.getElementById(f).value.trim() !== '');
+    if (filled) answered++;
+  });
+  const pct = Math.round((answered / required.length) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `ตอบแล้ว ${answered} จาก ${required.length} ข้อบังคับ`;
+
+  // Mark cards
+  required.forEach(f => {
+    const cardId = CARD_MAP[f] || f;
+    const card = document.getElementById('card-' + cardId);
+    if (!card) return;
+    const isRadio = document.querySelector(`[name="${f}"]`);
+    const filled = isRadio
+      ? !!document.querySelector(`[name="${f}"]:checked`)
+      : (document.getElementById(f) && document.getElementById(f).value.trim() !== '');
+    // Only mark answered if ALL required fields in this card are filled
+    const cardFields = required.filter(rf => (CARD_MAP[rf] || rf) === cardId);
+    const allFilled = cardFields.every(cf => {
+      const r = document.querySelector(`[name="${cf}"]`);
+      return r ? !!document.querySelector(`[name="${cf}"]:checked`) : (document.getElementById(cf) && document.getElementById(cf).value.trim() !== '');
+    });
+    card.classList.toggle('answered', allFilled);
+    if (filled) {
+      card.classList.remove('required-error');
+      const err = document.getElementById('err-' + f);
+      if (err) err.classList.remove('show');
+    }
+  });
+}
+
+// ─── SUBMIT ───────────────────────────────────────────────
+function submitForm() {
+  const required = getActiveRequired();
+  let valid = true;
+  required.forEach(f => {
+    const cardId = CARD_MAP[f] || f;
+    const card = document.getElementById('card-' + cardId);
+    const err = document.getElementById('err-' + f);
+    const isRadio = document.querySelector(`[name="${f}"]`);
+    const filled = isRadio
+      ? !!document.querySelector(`[name="${f}"]:checked`)
+      : (document.getElementById(f) && document.getElementById(f).value.trim() !== '');
+    if (!filled) {
+      valid = false;
+      if (card) card.classList.add('required-error');
+      if (err) err.classList.add('show');
+    }
+  });
+
+  if (!valid) {
+    const firstErr = document.querySelector('.required-error');
+    if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  const entry = {
+    ts: new Date().toLocaleString('th-TH'),
+    q1: document.querySelector('[name="q1"]:checked')?.value || '',
+    q2: document.getElementById('q2').value.trim(),
+    q3: document.querySelector('[name="q3"]:checked')?.value || '',
+    q4: document.getElementById('q4').value.trim(),
+    q5: document.querySelector('[name="q5"]:checked')?.value || '',
+    q6: document.getElementById('q6').value.trim(),
+    q7: document.querySelector('[name="q7"]:checked')?.value || '',
+    q8: document.getElementById('q8').value.trim(),
+    q9: document.querySelector('[name="q9"]:checked')?.value || '',
+    q10: document.getElementById('q10').value.trim(),
+    q11: document.querySelector('[name="q11"]:checked')?.value || '',
+  };
+
+  responses.push(entry);
+  localStorage.setItem('survey_responses', JSON.stringify(responses));
+
+  // ส่งข้อมูลไป Google Sheets
+  document.getElementById('form-main').style.display = 'none';
+  document.getElementById('success-screen').classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  fetch(SHEET_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry)
+  }).catch(err => console.warn('Sheet sync failed:', err));
+}
+
+function resetForm() {
+  document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  document.querySelectorAll('.question-card').forEach(c => {
+    c.classList.remove('answered', 'required-error');
+  });
+  document.querySelectorAll('.error-msg').forEach(e => e.classList.remove('show'));
+  updateConditionals();
+  const required = getActiveRequired();
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('progress-text').textContent = `ตอบแล้ว 0 จาก ${required.length} ข้อบังคับ`;
+  document.getElementById('form-main').style.display = 'block';
+  document.getElementById('success-screen').classList.remove('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── DASHBOARD ────────────────────────────────────────────
+function renderDashboard() {
+  const n = responses.length;
+  document.getElementById('dash-count').textContent = n + ' การตอบกลับ';
+  document.getElementById('dash-empty').style.display = n === 0 ? 'block' : 'none';
+  document.getElementById('dash-content').style.display = n === 0 ? 'none' : 'block';
+  if (n === 0) return;
+
+  document.getElementById('st-total').textContent = n;
+
+  const pct = (key, val) => {
+    const c = responses.filter(r => r[key] === val).length;
+    return { c, p: Math.round((c / n) * 100) };
+  };
+
+  // Stats
+  document.getElementById('st-q1-agree').textContent = pct('q1','เห็นด้วย').p + '%';
+  document.getElementById('st-q3-agree').textContent = pct('q3','เห็นด้วย').p + '%';
+  document.getElementById('st-q5-agree').textContent = pct('q5','เห็นด้วย').p + '%';
+
+  // Charts + inline text responses
+  renderRadioChart('chart-q1', 'q1', ['เห็นด้วย','ไม่เห็นด้วย'], ['bar-agree','bar-disagree'], n);
+  renderTextResponses('text-q2', 'q2', '💬 เหตุผลที่ไม่เห็นด้วย');
+
+  renderRadioChart('chart-q3', 'q3', ['เห็นด้วย','ไม่เห็นด้วย'], ['bar-agree','bar-disagree'], n);
+  renderTextResponses('text-q4', 'q4', '💬 เหตุผลที่ไม่เห็นด้วย');
+
+  renderRadioChart('chart-q5', 'q5', ['เห็นด้วย','ไม่เห็นด้วย'], ['bar-agree','bar-disagree'], n);
+  renderTextResponses('text-q6', 'q6', '💬 เหตุผลที่ไม่เห็นด้วย');
+
+  renderRadioChart('chart-q7', 'q7', ['ออนไลน์ (Online)','ออนไซต์ (Onsite)'], ['bar-online','bar-onsite'], n);
+  renderTextResponses('text-q8', 'q8', '💬 เหตุผลประกอบ');
+
+  renderRadioChart('chart-q9', 'q9', ['ออนไลน์ (Online)','ออนไซต์ (Onsite)'], ['bar-online','bar-onsite'], n);
+  renderTextResponses('text-q10', 'q10', '💬 เหตุผลประกอบ');
+
+  renderRadioChart('chart-q11','q11',['หมุนวงล้อ Wheel of Names เช่นเดิม','ให้ SAT ใช้ AI จัดให้'],['bar-wheel','bar-ai'], n);
+}
+
+function renderRadioChart(containerId, key, labels, classes, n) {
+  const el = document.getElementById(containerId);
+  let html = '';
+  labels.forEach((label, i) => {
+    const count = responses.filter(r => r[key] === label).length;
+    const p = n > 0 ? Math.round((count / n) * 100) : 0;
+    html += `
+      <div class="bar-group">
+        <div class="bar-label"><span>${label}</span><span style="font-weight:700">${count} คน (${p}%)</span></div>
+        <div class="bar-track">
+          <div class="bar-fill ${classes[i]}" style="width:${p}%">${p > 10 ? p + '%' : ''}</div>
+        </div>
+      </div>`;
+  });
+  el.innerHTML = html;
+}
+
+function renderTextResponses(containerId, key, label) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const texts = responses.filter(r => r[key] && r[key].trim()).map(r => ({ text: r[key], ts: r.ts }));
+  if (texts.length === 0) { el.innerHTML = ''; return; }
+  let html = `<div style="margin-top:16px;padding-top:14px;border-top:1px dashed var(--border)">
+    <div style="font-size:13px;font-weight:700;color:var(--text-soft);margin-bottom:10px">${label} (${texts.length} ความเห็น)</div>`;
+  texts.forEach((t, i) => {
+    html += `<div class="response-item">
+      <div class="response-meta">📅 ${t.ts}</div>
+      ${t.text}
+    </div>`;
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────
+function exportCSV() {
+  if (responses.length === 0) { alert('ยังไม่มีข้อมูลค่ะ'); return; }
+  const headers = ['เวลา','Q1','Q2_เหตุผล','Q3','Q4_เหตุผล','Q5','Q6_เหตุผล','Q7_เวรบ่าย','Q8_เหตุผล','Q9_เวรหยุด','Q10_เหตุผล','Q11_การจัดเวร'];
+  const rows = responses.map(r => [
+    r.ts, r.q1, r.q2, r.q3, r.q4, r.q5, r.q6, r.q7, r.q8, r.q9, r.q10, r.q11
+  ].map(v => `"${(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv = '\uFEFF' + headers.join(',') + '\n' + rows.join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = 'survey_results.csv';
+  a.click();
+}
+
+function printDash() { window.print(); }
+
+function clearData() {
+  if (!confirm('ต้องการลบข้อมูลทั้งหมดใช่ไหมคะ?')) return;
+  responses = [];
+  localStorage.removeItem('survey_responses');
+  renderDashboard();
+}
+</script>
+</body>
+</html>
